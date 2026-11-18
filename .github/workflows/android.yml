@@ -1,3 +1,4 @@
+
 name: Gerar APK Android
 
 on:
@@ -11,24 +12,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Baixar projeto
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: '21'
 
-      - uses: actions/setup-node@v4
+      - name: Configurar Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Instalar dependencias
+      - name: Instalar dependências
         run: npm install
 
       - name: Criar projeto Android
         run: npx cap add android
 
-      - name: Sincronizar
+      - name: Sincronizar aplicativo
         run: npx cap sync android
 
       - name: Gerar APK
@@ -37,7 +41,7 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Salvar APK
+      - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
         with:
           name: VnHeadTracking-APK
