@@ -1,0 +1,583 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08060e">
+<title>VnHeadTracking 2.0</title>
+
+<style>
+:root {
+  --bg:#08060e;
+  --purple:#a855f7;
+  --neon:#c084fc;
+  --text:#f7f2ff;
+  --muted:#a99bb8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:radial-gradient(ellipse at 50% -15%,#351052,#100a19 38%,var(--bg) 72%);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+  min-height:100vh;
+}
+.app,.login-screen,nav{width:min(100%,520px);margin:auto}
+.app{padding:22px 16px 105px}
+.login-screen{
+  min-height:100vh;padding:22px 20px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+header,.brand,.section-head,.feature,.info,.key-top,.key-actions,.filter-row{
+  display:flex;align-items:center;
+}
+header,.key-top{justify-content:space-between}
+header{margin:8px 2px 25px}
+.brand,.section-head,.info{gap:12px}
+.logo{
+  height:48px;width:48px;border:1px solid var(--purple);
+  border-radius:15px;display:grid;place-items:center;
+  color:var(--neon);font-weight:900;font-size:23px;
+  text-shadow:0 0 14px var(--purple);
+}
+.login-brand{text-align:center;margin-bottom:30px}
+.login-brand .logo{margin:0 auto 15px;width:62px;height:62px;font-size:27px}
+h1{font-size:19px;margin:0}
+.login-brand h1{font-size:22px}
+.brand small,.login-brand p{
+  display:block;color:var(--muted);font-size:9px;
+  letter-spacing:2px;margin-top:4px;
+}
+.icon-btn,.logout,.secondary-button,.back-button{
+  border:1px solid #63308a;background:#1c1428;
+  color:#e9caff;border-radius:12px;
+}
+.icon-btn{width:43px;height:43px;font-size:20px}
+.hero,.login-card,.profile-card,.admin-card{
+  border:1px solid #7433a1;border-radius:22px;padding:22px;
+  background:linear-gradient(145deg,#1c1429,#100b17);
+}
+.hero{background:linear-gradient(115deg,#28113c,#171020 65%,#241036)}
+.profile-card,.admin-card{border-radius:18px;margin-top:13px}
+.eyebrow{color:var(--neon);font-size:11px;font-weight:800;letter-spacing:2px}
+.hero h2{font-size:29px;margin:9px 0}
+.login-card h2{font-size:21px;margin:9px 0}
+p{color:var(--muted);font-size:12px;line-height:1.5}
+.hero p{color:#c4b6d1;font-size:13px}
+.game-tag{
+  display:inline-block;border:1px solid #8840ba;border-radius:30px;
+  padding:9px 13px;font-size:11px;font-weight:800;margin:4px 3px 0 0;
+}
+.section-head{margin:27px 2px 14px}
+.section-head h3{font-size:13px;letter-spacing:2px;margin:0}
+.section-head span{height:1px;background:linear-gradient(90deg,var(--purple),transparent);flex:1}
+.cards{display:grid;gap:11px}
+.feature{
+  gap:14px;padding:15px;border:1px solid #63308a;border-radius:17px;
+  background:linear-gradient(110deg,#1c1428,#100c17);
+}
+.toggle{
+  width:48px;height:27px;flex:0 0 48px;border:1px solid #594267;
+  border-radius:30px;background:#302638;padding:3px;
+}
+.toggle span{
+  display:block;width:19px;height:19px;border-radius:50%;
+  background:#a99bb8;transition:.2s;
+}
+.toggle[aria-checked=true]{background:#7028a6;border-color:#d18cff}
+.toggle[aria-checked=true] span{transform:translateX(20px);background:#fff}
+.feature-icon{
+  width:43px;height:43px;flex:0 0 43px;border-radius:13px;
+  display:grid;place-items:center;background:#31164a;
+  color:#d8a5ff;font-size:21px;
+}
+.feature-copy{flex:1}
+.feature-copy strong{display:block;font-size:14px;margin-bottom:4px}
+.feature-copy small,.info small{
+  color:var(--muted);font-size:11px;display:block;
+}
+.info{
+  margin-top:20px;border:1px solid #47215f;background:#120d1b;
+  border-radius:16px;padding:14px;
+}
+.info-mark{font-size:22px;color:var(--neon)}
+.info strong,.profile-card strong{color:#d8a5ff}
+nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  display:flex;justify-content:space-around;
+  padding:11px 8px calc(12px + env(safe-area-inset-bottom));
+  background:#0d0914ed;border-top:1px solid #3c2052;z-index:5;
+}
+nav button{
+  background:none;border:0;color:#887b96;font-size:10px;
+  display:grid;gap:5px;justify-items:center;min-width:65px;
+}
+nav button b{font-size:20px;font-weight:500}
+nav button.active{color:var(--neon)}
+.page,.hidden{display:none!important}
+.page.active{display:block!important}
+label,.admin-label{
+  display:block;font-size:10px;letter-spacing:1.5px;
+  color:#d8a5ff;font-weight:800;margin:17px 0 8px;
+}
+input,select{
+  width:100%;padding:14px;background:#0b0812;
+  border:1px solid #542d70;border-radius:11px;
+  color:#fff;font-size:14px;outline:none;
+}
+input:focus,select:focus{border-color:var(--neon)}
+.btn-main{
+  width:100%;margin-top:20px;padding:14px;border:0;
+  border-radius:12px;background:linear-gradient(90deg,#7e22ce,#a855f7);
+  color:#fff;font-weight:850;
+}
+.logout,.secondary-button{width:100%;margin-top:15px;padding:13px;color:#fff}
+.login-error{color:#ff829c;font-size:12px;min-height:18px;margin-top:13px}
+.login-footer{text-align:center;color:var(--muted);font-size:10px;margin-top:22px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}
+.stat,.key-item{background:#100b18;border:1px solid #542d70;border-radius:13px;padding:12px}
+.stat{text-align:center;padding:12px 7px}
+.stat strong{display:block;color:var(--neon);font-size:22px}
+.stat small{font-size:9px;color:var(--muted)}
+.filter-row{gap:7px;margin:15px 0 10px}
+.filter-row button{
+  flex:1;padding:10px 4px;border:1px solid #542d70;
+  border-radius:10px;background:#100b18;color:#bca9ca;
+  font-size:10px;font-weight:800;
+}
+.filter-row button.active{background:#542078;color:#fff;border-color:#c084fc}
+.key-item{margin-top:10px}
+.key-name{font-size:13px;font-weight:800}
+.key-value{font-size:12px;color:#d8a5ff;margin-top:10px;overflow-wrap:anywhere;user-select:all}
+.key-meta{font-size:10px;color:var(--muted);line-height:1.7;margin-top:8px;white-space:pre-line}
+.status{font-size:9px;font-weight:900;padding:6px 8px;border-radius:20px}
+.status.active{background:#123b2b;color:#70e5a5}
+.status.expired{background:#422b12;color:#ffc477}
+.status.revoked{background:#421c2b;color:#ff91aa}
+.key-actions{gap:8px;margin-top:12px}
+.key-actions button{flex:1;padding:10px 6px;border-radius:9px;font-size:10px;font-weight:800}
+.copy-key{background:#32164a;border:1px solid #8540b4;color:#e9caff}
+.revoke-key{background:#351521;border:1px solid #8e3655;color:#ff9bb0}
+.empty-list{text-align:center;padding:22px;color:var(--muted);font-size:12px}
+.back-button{padding:10px 14px;margin-bottom:15px}
+.toast{
+  position:fixed;left:50%;bottom:88px;transform:translateX(-50%);
+  background:#2a173b;border:1px solid #8b45bb;color:#f4e8ff;
+  padding:10px 15px;border-radius:12px;font-size:12px;
+  display:none;z-index:20;white-space:nowrap;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<section class="login-screen" id="loginScreen">
+  <div class="login-brand">
+    <div class="logo">VN</div>
+    <h1>VnHeadTracking 2.0</h1>
+    <p>GAMING CONTROL CENTER</p>
+  </div>
+
+  <div class="login-card">
+    <span class="eyebrow">ACESSO AO SISTEMA</span>
+    <h2>Bem-vindo!</h2>
+    <p>Entre com seu login e sua Key individual.</p>
+
+    <label>LOGIN</label>
+    <input id="loginInput" placeholder="Digite seu login">
+
+    <label>KEY DE ACESSO</label>
+    <input id="keyInput" placeholder="Digite sua Key">
+
+    <button class="btn-main" onclick="login()">ENTRAR</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+  <div class="login-footer">VnHeadTracking 2.0 · Central de recursos</div>
+</section>
+
+<!-- APLICATIVO -->
+<main class="app hidden" id="app">
+
+  <header>
+    <div class="brand">
+      <div class="logo">VN</div>
+      <div>
+        <h1>VnHeadTracking 2.0</h1>
+        <small>GAMING CONTROL CENTER</small>
+      </div>
+    </div>
+    <button class="icon-btn" onclick="logout()">↪</button>
+  </header>
+
+  <!-- INÍCIO -->
+  <section class="page active" id="homePage">
+    <div class="hero">
+      <span class="eyebrow">PAINEL PRINCIPAL</span>
+      <h2>Bem-vindo!</h2>
+      <p>Central de recursos e configurações para Free Fire.</p>
+      <span class="game-tag">FREE FIRE</span>
+      <span class="game-tag">FREE FIRE MAX</span>
+    </div>
+
+    <div class="section-head">
+      <h3>RECURSOS</h3><span></span>
+    </div>
+
+    <div class="cards" id="features">
+      <div class="feature">
+        <div class="feature-icon">◎</div>
+        <div class="feature-copy">
+          <strong>Rastreamento de Alvo</strong>
+          <small>Controle visual de recurso</small>
+        </div>
+        <button class="toggle" role="switch" aria-checked="false" onclick="toggleFeature(this)"><span></span></button>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">✥</div>
+        <div class="feature-copy">
+          <strong>Mira Antitremulação</strong>
+          <small>Opção de demonstração</small>
+        </div>
+        <button class="toggle" role="switch" aria-checked="false" onclick="toggleFeature(this)"><span></span></button>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">⌖</div>
+        <div class="feature-copy">
+          <strong>Precisão de Headshot</strong>
+          <small>Opção de demonstração</small>
+        </div>
+        <button class="toggle" role="switch" aria-checked="false" onclick="toggleFeature(this)"><span></span></button>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">◉</div>
+        <div class="feature-copy">
+          <strong>Acompanhamento de Movimento</strong>
+          <small>Opção de demonstração</small>
+        </div>
+        <button class="toggle" role="switch" aria-checked="false" onclick="toggleFeature(this)"><span></span></button>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">⚙</div>
+        <div class="feature-copy">
+          <strong>Controle de Sensibilidade</strong>
+          <small>Opção de demonstração</small>
+        </div>
+        <button class="toggle" role="switch" aria-checked="false" onclick="toggleFeature(this)"><span></span></button>
+      </div>
+    </div>
+
+    <div class="info">
+      <div class="info-mark">✦</div>
+      <div>
+        <strong>VnHeadTracking 2.0</strong>
+        <small>Versão 2.0 · Central de recursos</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERFIL -->
+  <section class="page" id="profilePage">
+    <div class="hero">
+      <span class="eyebrow">MEU PERFIL</span>
+      <h2>Minha conta</h2>
+      <p>Informações do seu acesso.</p>
+    </div>
+
+    <div class="profile-card">
+      <p>LOGIN</p>
+      <strong id="profileLogin">—</strong>
+      <p>IDENTIFICAÇÃO</p>
+      <strong id="profileId">—</strong>
+      <button class="btn-main hidden" id="ownerButton" onclick="openOwnerPanel()">PAINEL DO DONO</button>
+    </div>
+    <div class="admin-card hidden" id="ownerPanel">
+      <span class="eyebrow">ADMINISTRAÇÃO</span>
+      <h2>Gerenciar Keys</h2>
+
+      <label>VALIDADE DA KEY</label>
+      <select id="validity" onchange="toggleCustomDays()">
+        <option value="1">1 dia</option>
+        <option value="7">7 dias</option>
+        <option value="15">15 dias</option>
+        <option value="30" selected>30 dias</option>
+        <option value="60">60 dias</option>
+        <option value="90">90 dias</option>
+        <option value="custom">Personalizado</option>
+      </select>
+
+      <input class="hidden" id="customDays" type="number" min="1" placeholder="Quantidade de dias">
+
+      <button class="btn-main" onclick="generateKey()">GERAR NOVA KEY</button>
+
+      <div class="stats">
+        <div class="stat"><strong id="totalKeys">0</strong><small>TOTAL</small></div>
+        <div class="stat"><strong id="activeKeys">0</strong><small>ATIVAS</small></div>
+        <div class="stat"><strong id="revokedKeys">0</strong><small>REVOGADAS</small></div>
+      </div>
+
+      <div class="filter-row">
+        <button class="active" onclick="filterKeys('all',this)">TODAS</button>
+        <button onclick="filterKeys('active',this)">ATIVAS</button>
+        <button onclick="filterKeys('expired',this)">EXPIRADAS</button>
+        <button onclick="filterKeys('revoked',this)">REVOGADAS</button>
+      </div>
+      <div id="keyList"></div>
+    </div>
+  </section>
+</main>
+
+<nav class="hidden" id="bottomNav">
+  <button class="active" onclick="setTab('home',this)"><b>⌂</b>Início</button>
+  <button onclick="setTab('profile',this)"><b>♙</b>Perfil</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LOGIN_COMPARTILHADO = "VN-CLIENTES";
+const LOGIN_DONO = "VNDONO";
+const KEY_DONO = "DONO2026";
+const STORAGE_KEY = "vn_headtracking_keys_v2";
+
+let currentUser = null;
+let currentFilter = "all";
+let keys = [];
+
+function loadKeys(){
+  try{
+    keys = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  }catch(e){keys=[];}
+
+  if(!keys.length){
+    const now = new Date();
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate()+30);
+
+    keys = [
+      {key:"VN-TESTE-001",id:"1001",created:now.toISOString(),expires:expiry.toISOString(),status:"active"},
+      {key:"VN-TESTE-002",id:"1002",created:now.toISOString(),expires:expiry.toISOString(),status:"active"}
+    ];
+    saveKeys();
+  }
+}
+
+function saveKeys(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(keys));
+}
+
+function getStatus(item){
+  if(item.status==="revoked") return "revoked";
+  if(new Date(item.expires).getTime()<Date.now()) return "expired";
+  return "active";
+}
+
+function login(){
+  const user=document.getElementById("loginInput").value.trim();
+  const key=document.getElementById("keyInput").value.trim();
+  const error=document.getElementById("loginError");
+
+  if(user===LOGIN_DONO && key===KEY_DONO){
+    currentUser={role:"owner",id:"DONO"};
+    enterApp();
+    return;
+  }
+
+  if(user!==LOGIN_COMPARTILHADO){
+    error.textContent="Login incorreto. Use VN-CLIENTES.";
+    return;
+  }
+
+  const found=keys.find(k=>k.key===key);
+
+  if(!found){
+    error.textContent="Key não encontrada.";
+    return;
+  }
+
+  const status=getStatus(found);
+  if(status==="expired"){
+    error.textContent="Essa Key está expirada.";
+    return;
+  }
+  if(status==="revoked"){
+    error.textContent="Essa Key foi revogada.";
+    return;
+  }
+
+  currentUser={role:"client",id:found.id};
+  enterApp();
+}
+
+function enterApp(){
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  document.getElementById("bottomNav").classList.remove("hidden");
+
+  document.getElementById("profileLogin").textContent=
+    currentUser.role==="owner" ? LOGIN_DONO : LOGIN_COMPARTILHADO;
+
+  document.getElementById("profileId").textContent=currentUser.id;
+
+  document.getElementById("ownerButton").classList.toggle("hidden",currentUser.role!=="owner");
+  document.getElementById("ownerPanel").classList.add("hidden");
+}
+
+function logout(){
+  currentUser=null;
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("bottomNav").classList.add("hidden");
+  document.getElementById("loginScreen").classList.remove("hidden");
+  document.getElementById("loginInput").value="";
+  document.getElementById("keyInput").value="";
+  document.getElementById("loginError").textContent="";
+}
+
+function setTab(tab,button){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(tab+"Page").classList.add("active");
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  button.classList.add("active");
+}
+
+function toggleFeature(button){
+  const active=button.getAttribute("aria-checked")==="true";
+  button.setAttribute("aria-checked",String(!active));
+  showToast(!active?"Opção ativada":"Opção desativada");
+}
+
+function openOwnerPanel(){
+  if(currentUser?.role!=="owner") return;
+  document.getElementById("ownerPanel").classList.remove("hidden");
+  refreshKeys();
+}
+
+function toggleCustomDays(){
+  const custom=document.getElementById("validity").value==="custom";
+  document.getElementById("customDays").classList.toggle("hidden",!custom);
+}
+
+function generateKey(){
+  if(currentUser?.role!=="owner") return;
+
+  let days=document.getElementById("validity").value;
+  if(days==="custom"){
+    days=Number(document.getElementById("customDays").value);
+    if(!Number.isInteger(days)||days<1){
+      showToast("Informe uma validade válida.");
+      return;
+    }
+  }else days=Number(days);
+
+  const now=new Date();
+  const expiry=new Date(now);
+  expiry.setDate(expiry.getDate()+days);
+
+  const key="VN-"+Math.random().toString(36).slice(2,8).toUpperCase()+"-"+Date.now().toString().slice(-5);
+  const id="VN"+Date.now().toString().slice(-7);
+
+  keys.push({
+    key,id,created:now.toISOString(),
+    expires:expiry.toISOString(),status:"active"
+  });
+
+  saveKeys();
+  refreshKeys();
+  showToast("Key gerada com sucesso!");
+}
+
+function formatDate(date){
+  return new Date(date).toLocaleDateString("pt-BR");
+}
+
+function filterKeys(filter,button){
+  currentFilter=filter;
+  document.querySelectorAll(".filter-row button").forEach(b=>b.classList.remove("active"));
+  button.classList.add("active");
+  renderKeys();
+}
+
+function refreshKeys(){
+  const active=keys.filter(k=>getStatus(k)==="active").length;
+  const revoked=keys.filter(k=>getStatus(k)==="revoked").length;
+
+  document.getElementById("totalKeys").textContent=keys.length;
+  document.getElementById("activeKeys").textContent=active;
+  document.getElementById("revokedKeys").textContent=revoked;
+  renderKeys();
+}
+
+function renderKeys(){
+  const list=document.getElementById("keyList");
+  const filtered=keys.filter(k=>currentFilter==="all"||getStatus(k)===currentFilter);
+
+  if(!filtered.length){
+    list.innerHTML='<div class="empty-list">Nenhuma Key encontrada.</div>';
+    return;
+  }
+
+  list.innerHTML=filtered.map(k=>{
+    const status=getStatus(k);
+    const label={active:"ATIVA",expired:"EXPIRADA",revoked:"REVOGADA"}[status];
+
+    return `
+      <div class="key-item">
+        <div class="key-top">
+          <span class="key-name">Cliente · ID ${k.id}</span>
+          <span class="status ${status}">${label}</span>
+        </div>
+        <div class="key-value">${k.key}</div>
+        <div class="key-meta">
+Criada: ${formatDate(k.created)}
+Expira: ${formatDate(k.expires)}
+        </div>
+        <div class="key-actions">
+          <button class="copy-key" onclick="copyKey('${k.key}')">COPIAR</button>
+          ${status==="active"?`<button class="revoke-key" onclick="revokeKey('${k.id}')">REVOGAR</button>`:""}
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function revokeKey(id){
+  if(currentUser?.role!=="owner") return;
+  const item=keys.find(k=>k.id===id);
+  if(!item) return;
+  item.status="revoked";
+  saveKeys();
+  refreshKeys();
+  showToast("Key revogada.");
+}
+
+async function copyKey(key){
+  try{
+    await navigator.clipboard.writeText(key);
+    showToast("Key copiada!");
+  }catch(e){
+    const area=document.createElement("textarea");
+    area.value=key;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+    showToast("Key copiada!");
+  }
+}
+
+function showToast(message){
+  const toast=document.getElementById("toast");
+  toast.textContent=message;
+  toast.style.display="block";
+  setTimeout(()=>toast.style.display="none",2200);
+}
+
+loadKeys();
+</script>
+</body>
+        </html>
+        
